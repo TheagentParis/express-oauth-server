@@ -51,6 +51,11 @@ ExpressOAuthServer.prototype.authenticate = function(options) {
       })
       .tap(function(token) {
         res.locals.oauth = { token: token };
+        // options.addAcceptedScopesHeader and options.addAuthorizedScopesHeader
+        // load some headers but never load inside the response express
+        if (Object.keys(response.headers).length > 0) {
+          res.set(response.headers);
+        }
         next();
       })
       .catch(function(e) {
