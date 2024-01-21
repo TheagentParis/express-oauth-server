@@ -28,6 +28,9 @@ function ExpressOAuthServer(options) {
   this.continueMiddleware = options.continueMiddleware ? true : false;
   delete options.continueMiddleware;
 
+  this.noResponseMiddleware = options.noResponseMiddleware ? true : false;
+  delete options.noResponseMiddleware;
+
   this.server = new NodeOAuthServer(options);
 }
 
@@ -124,7 +127,9 @@ ExpressOAuthServer.prototype.token = function(options) {
         }
       })
       .then(function() {
-        return handleResponse.call(this, req, res, response);
+        if (!this.noResponseMiddleware) {
+          return handleResponse.call(this, req, res, response);
+        }
       })
       .catch(function(e) {
         return handleError.call(this, e, req, res, response, next);
